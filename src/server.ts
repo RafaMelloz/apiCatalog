@@ -10,31 +10,46 @@ app.get('/products', async (req, res) => {
     return { products };
 });
 
+let productIdCounter = 1; // Inicia o contador de IDs
+
 app.post('/products', async (req, res) => {
-    const createProductSchema = z.object({
-        nome: z.string(),
-        descricao: z.string(),
-        preco: z.number().int(),
-        mainImg: z.string(),
-        overviewImg: z.object({}),
-        qntProdutos: z.number().int()
-    });
+    try {
+        const createProductSchema = z.object({
+            nome: z.string(),
+            descricao: z.string(),
+            preco: z.number().int(),
+            mainImg: z.string(),
+            overviewImgs: z.object({
+                firstImg: z.string(),
+                secondaryImg: z.string(),
+                thirdImg: z.string(),
+            }),
+            qntProdutos: z.number().int()
+        });
 
-    const { nome, descricao, preco, mainImg, overviewImg, qntProdutos } = createProductSchema.parse(req.body);
+        const { nome, descricao, preco, mainImg, overviewImgs, qntProdutos } = createProductSchema.parse(req.body);
 
-    await prisma.products.create({
-        data: {
-            nome,
-            descricao,
-            preco,
-            mainImg,
-            overviewImg,
-            qntProdutos,
-        }
-    });
+        await prisma.products.create({
+            data: {
+                id: productIdCounter.toString(), // Atribui o ID atual do contador ao produto
+                nome,
+                descricao,
+                preco,
+                mainImg,
+                overviewImg: JSON.stringify(overviewImgs),
+                qntProdutos,
+            }
+        });
 
-    return res.status(201).send();
+        productIdCounter++; // Incrementa o contador de IDs
+
+        return res.status(201).send();
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send('Internal Server Error');
+    }
 });
+
 
 app.get('/products/:id', async (req, res) => {
     const { id } = req.params as { id: string };
