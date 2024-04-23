@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/fastify-cors": "^2.1.0",
     "@types/node": "^20.12.7",
     "prisma": "^5.12.1",
     "tsup": "^8.0.2",
@@ -22,8 +23,10 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@fastify/cors": "^9.0.1",
     "@prisma/client": "^5.12.1",
     "fastify": "^4.26.2",
+    "fastify-cors": "^6.1.0",
     "zod": "^3.23.0"
   }
 }
