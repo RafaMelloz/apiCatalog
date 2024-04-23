@@ -10,11 +10,10 @@ app.get('/products', async (req, res) => {
     return { products };
 });
 
-let productIdCounter = 1; // Inicia o contador de IDs
-
 app.post('/products', async (req, res) => {
     try {
         const createProductSchema = z.object({
+            id: z.string(),
             nome: z.string(),
             descricao: z.string(),
             preco: z.number().int(),
@@ -27,11 +26,11 @@ app.post('/products', async (req, res) => {
             qntProdutos: z.number().int()
         });
 
-        const { nome, descricao, preco, mainImg, overviewImgs, qntProdutos } = createProductSchema.parse(req.body);
+        const {id, nome, descricao, preco, mainImg, overviewImgs, qntProdutos } = createProductSchema.parse(req.body);
 
         await prisma.products.create({
             data: {
-                id: productIdCounter.toString(), // Atribui o ID atual do contador ao produto
+                id,
                 nome,
                 descricao,
                 preco,
@@ -41,7 +40,6 @@ app.post('/products', async (req, res) => {
             }
         });
 
-        productIdCounter++; // Incrementa o contador de IDs
 
         return res.status(201).send();
     } catch (error) {
